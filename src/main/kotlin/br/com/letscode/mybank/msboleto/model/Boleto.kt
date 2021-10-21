@@ -2,6 +2,7 @@ package br.com.letscode.mybank.msboleto.model
 
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -20,7 +21,8 @@ data class Boleto (
     val multaDia: Float,
     val jurosDia: Float,
     val vencimento: LocalDate,
-    val pgtoAposVencimento: Boolean
+    val pgtoAposVencimento: Boolean,
+    val registroCriadoEm: LocalDateTime
 
 
 
