@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/dbBoletoAudit'
+    hikari:
+      username: 'compose-postgres'
+      password: 'compose-postgres'
+  jpa:
+    hibernate:
+      ddl-auto: update
