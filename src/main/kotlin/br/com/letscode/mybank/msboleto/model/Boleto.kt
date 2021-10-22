@@ -17,9 +17,9 @@ data class Boleto (
     val codContaBeneficiario: String,
     val nossoNumero: String,
     val especie: String,
-    val valor: BigDecimal,
-    val multaDia: Float,
-    val jurosDia: Float,
+    var valor: BigDecimal,
+    val multa: Double,
+    val jurosDia: Double,
     val vencimento: LocalDate,
     val pgtoAposVencimento: Boolean,
     val registroCriadoEm: LocalDateTime
