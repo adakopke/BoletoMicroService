@@ -11,7 +11,7 @@ import javax.persistence.*
 data class Boleto (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Int = 0,
     val idCliente: UUID,
     val codAgBeneficiario: Int,
     val codContaBeneficiario: String,
