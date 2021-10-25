@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.util.*
 
 @Service
 class BoletoService (val boletoRepository: BoletoRepository ) {
@@ -27,5 +28,9 @@ class BoletoService (val boletoRepository: BoletoRepository ) {
         boletoRepository.save(boleto)
         ResponseEntity.ok("Operação realizada com sucesso \n $boleto")
 
+    }
+
+    fun consultar(idCliente: UUID): List<Boleto>? = run {
+        boletoRepository.findAllByIdCliente(idCliente)
     }
 }

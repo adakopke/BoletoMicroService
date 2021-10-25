@@ -17,10 +17,9 @@ class BoletoController (val boletoService: BoletoService) {
                    @RequestHeader (value = "Authorization", required = true) token : String
     ) : ResponseEntity<String> = run {
 
-        //TODO criar validação do TOKEN em boletoservice
+        //TODO Incluir consulta ao MS Autenticacao para retornar permissões
 
         val boleto = Boleto (
-
             //TODO capturar UUID do token
             idCliente = UUID.randomUUID(),
             codAgBeneficiario = boletoRequest.codAgBeneficiario,
@@ -38,5 +37,16 @@ class BoletoController (val boletoService: BoletoService) {
         boletoService.validarPgto(boleto)
 
     }
+
+    @GetMapping("pagamentos")
+    fun consultar (@RequestHeader (value = "Authorization", required = true) token : String) : ResponseEntity<List<Boleto>> = run  {
+
+        //TODO extrair idCliente do token
+
+        val idCliente: UUID = UUID.fromString("b3f33891-d380-4f8b-bcb9-0dbeb10b4eb8")
+        ResponseEntity.ok(boletoService.consultar(idCliente))
+
+    }
+
 
 }
