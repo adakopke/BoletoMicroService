@@ -7,6 +7,8 @@ data class BoletoRequest (
 
     val codAgBeneficiario: Int,
     val codContaBeneficiario: String,
+    val codAgPagador: Int,
+    val codContaPagador: String,
     val nossoNumero: String,
     val especie: String,
     val valor: BigDecimal,

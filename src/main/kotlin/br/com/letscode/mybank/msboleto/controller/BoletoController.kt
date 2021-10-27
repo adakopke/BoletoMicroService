@@ -17,13 +17,16 @@ class BoletoController (val boletoService: BoletoService) {
                    @RequestHeader (value = "Authorization", required = true) token : String
     ) : ResponseEntity<String> = run {
 
-        //TODO Incluir consulta ao MS Autenticacao para retornar permissões
+        //TODO Incluir consulta ao MS de Autorização para retornar se o cliente pode fazer pagamentos
 
+        //Perguntar na aula se o trecho abaixo pode ser melhorado (let)
         val boleto = Boleto (
             //TODO capturar UUID do token
             idCliente = UUID.randomUUID(),
             codAgBeneficiario = boletoRequest.codAgBeneficiario,
             codContaBeneficiario = boletoRequest.codContaBeneficiario,
+            codAgPagador = boletoRequest.codAgPagador,
+            codContaPagador = boletoRequest.codContaPagador,
             nossoNumero = boletoRequest.nossoNumero,
             especie = boletoRequest.especie,
             valor = boletoRequest.valor,

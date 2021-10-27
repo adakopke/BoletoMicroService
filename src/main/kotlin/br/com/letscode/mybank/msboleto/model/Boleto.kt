@@ -15,6 +15,8 @@ data class Boleto (
     val idCliente: UUID,
     val codAgBeneficiario: Int,
     val codContaBeneficiario: String,
+    val codAgPagador: Int,
+    val codContaPagador: String,
     val nossoNumero: String,
     val especie: String,
     var valor: BigDecimal,

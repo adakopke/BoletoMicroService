@@ -12,7 +12,7 @@ import java.util.*
 @Service
 class BoletoService (val boletoRepository: BoletoRepository ) {
     fun validarPgto(boleto: Boleto): ResponseEntity<String> = run {
-
+        //TODO TRocar para fun
         if (boleto.vencimento.isBefore(LocalDate.now()) && boleto.pgtoAposVencimento.equals(false)) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Pagamento só pode ser realizado até o vencimento")
         } else {
@@ -30,7 +30,6 @@ class BoletoService (val boletoRepository: BoletoRepository ) {
 
     }
 
-    fun consultar(idCliente: UUID): List<Boleto>? = run {
-        boletoRepository.findAllByIdCliente(idCliente)
-    }
+    //Perguntar na aula se está certo ou se merece um exception
+    fun consultar(idCliente: UUID): List<Boleto> = boletoRepository.findAllByIdCliente(idCliente)
 }
