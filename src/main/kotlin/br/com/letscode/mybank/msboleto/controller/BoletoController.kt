@@ -3,10 +3,13 @@ package br.com.letscode.mybank.msboleto.controller
 import br.com.letscode.mybank.msboleto.dto.BoletoRequest
 import br.com.letscode.mybank.msboleto.model.Boleto
 import br.com.letscode.mybank.msboleto.service.BoletoService
+import com.auth0.jwt.JWT
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.util.*
+
 
 @RestController
 @RequestMapping("api")
@@ -17,12 +20,21 @@ class BoletoController (val boletoService: BoletoService) {
                    @RequestHeader (value = "Authorization", required = true) token : String
     ) : ResponseEntity<String> = run {
 
+        val requestTokenHeader: String? = token
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            val jwtToken = requestTokenHeader.substring(7)
+            val token : String = JWT.decode(jwtToken).subject
+
+
+
+        }
+
         //TODO Incluir consulta ao MS de Autorização para retornar se o cliente pode fazer pagamentos
 
         //Perguntar na aula se o trecho abaixo pode ser melhorado (let)
         val boleto = Boleto (
             //TODO capturar UUID do token
-            idCliente = UUID.randomUUID(),
+            idCliente = UUID.fromString(token),
             codAgBeneficiario = boletoRequest.codAgBeneficiario,
             codContaBeneficiario = boletoRequest.codContaBeneficiario,
             codAgPagador = boletoRequest.codAgPagador,
@@ -50,6 +62,5 @@ class BoletoController (val boletoService: BoletoService) {
         ResponseEntity.ok(boletoService.consultar(idCliente))
 
     }
-
 
 }
