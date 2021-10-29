@@ -1,8 +1,10 @@
 package br.com.letscode.mybank.msboleto.controller
 
 import br.com.letscode.mybank.msboleto.dto.BoletoDTO
+import br.com.letscode.mybank.msboleto.model.Autorizacoes
 import br.com.letscode.mybank.msboleto.model.Boleto
 import br.com.letscode.mybank.msboleto.service.BoletoService
+import br.com.letscode.mybank.msboleto.utils.Autorizacao
 import com.auth0.jwt.JWT
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,26 +17,27 @@ import java.util.*
 class BoletoController (val boletoService: BoletoService) {
 
     @PostMapping("pagar")
-    fun pgtoBoleto(@RequestBody boletoRequest: BoletoDTO,
-                   @RequestHeader (value = "Authorization", required = true) token : String
+    suspend fun pgtoBoleto(@RequestBody boletoRequest: BoletoDTO,
+                           @RequestHeader (value = "Authorization", required = true) token : String
     ) : ResponseEntity<String> = run {
 
-        val requestTokenHeader: String? = token
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            val jwtToken = requestTokenHeader.substring(7)
-            val token : String = JWT.decode(jwtToken).subject
 
+        val requestTokenHeader: String = token
+        val tokenResultado : String = if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            val jwtToken = requestTokenHeader.substring(7)
+             JWT.decode(jwtToken).subject
+
+        } else {
+            throw RuntimeException()
         }
 
-
-
-
-
+        val permissoes : Autorizacoes = Autorizacao.getPermission(token)
+        println(permissoes)
 
         //Perguntar na aula se o trecho abaixo pode ser melhorado (let)
         val boleto = Boleto (
             //TODO capturar UUID do token
-            idCliente = UUID.fromString(token),
+            idCliente = UUID.fromString(tokenResultado),
             codAgBeneficiario = boletoRequest.codAgBeneficiario,
             codContaBeneficiario = boletoRequest.codContaBeneficiario,
             codAgPagador = boletoRequest.codAgPagador,

@@ -1,9 +1,14 @@
 package br.com.letscode.mybank.msboleto.utils
 import br.com.letscode.mybank.msboleto.model.Autorizacoes
+import io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON
+import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.util.MimeTypeUtils.APPLICATION_JSON
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
+import java.awt.PageAttributes
 
-object BoletoClient {
+object Autorizacao {
 
     val client = WebClient
         .builder()
