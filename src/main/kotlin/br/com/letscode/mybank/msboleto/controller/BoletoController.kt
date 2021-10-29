@@ -1,10 +1,9 @@
 package br.com.letscode.mybank.msboleto.controller
 
-import br.com.letscode.mybank.msboleto.dto.BoletoRequest
+import br.com.letscode.mybank.msboleto.dto.BoletoDTO
 import br.com.letscode.mybank.msboleto.model.Boleto
 import br.com.letscode.mybank.msboleto.service.BoletoService
 import com.auth0.jwt.JWT
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
@@ -16,7 +15,7 @@ import java.util.*
 class BoletoController (val boletoService: BoletoService) {
 
     @PostMapping("pagar")
-    fun pgtoBoleto(@RequestBody boletoRequest: BoletoRequest,
+    fun pgtoBoleto(@RequestBody boletoRequest: BoletoDTO,
                    @RequestHeader (value = "Authorization", required = true) token : String
     ) : ResponseEntity<String> = run {
 
@@ -25,11 +24,12 @@ class BoletoController (val boletoService: BoletoService) {
             val jwtToken = requestTokenHeader.substring(7)
             val token : String = JWT.decode(jwtToken).subject
 
-
-
         }
 
-        //TODO Incluir consulta ao MS de Autorização para retornar se o cliente pode fazer pagamentos
+
+
+
+
 
         //Perguntar na aula se o trecho abaixo pode ser melhorado (let)
         val boleto = Boleto (

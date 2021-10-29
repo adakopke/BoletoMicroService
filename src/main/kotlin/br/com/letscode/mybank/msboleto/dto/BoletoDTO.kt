@@ -3,7 +3,7 @@ package br.com.letscode.mybank.msboleto.dto
 import java.math.BigDecimal
 import java.time.LocalDate
 
-data class BoletoRequest (
+data class BoletoDTO (
 
     val codAgBeneficiario: Int,
     val codContaBeneficiario: String,
