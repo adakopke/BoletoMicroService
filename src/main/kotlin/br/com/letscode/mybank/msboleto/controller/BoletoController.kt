@@ -31,17 +31,17 @@ class BoletoController (val boletoService: BoletoService) {
             throw RuntimeException()
         }
 
+        //TODO Validar esta funcionalidade
         val permissoes : Autorizacoes = Autorizacao.getPermission(token)
         println(permissoes)
 
         //Perguntar na aula se o trecho abaixo pode ser melhorado (let)
         val boleto = Boleto (
-            //TODO capturar UUID do token
+
             idCliente = UUID.fromString(tokenResultado),
             codAgBeneficiario = boletoRequest.codAgBeneficiario,
             codContaBeneficiario = boletoRequest.codContaBeneficiario,
-            codAgPagador = boletoRequest.codAgPagador,
-            codContaPagador = boletoRequest.codContaPagador,
+            idContaPagador  = boletoRequest.idContaPagador,
             nossoNumero = boletoRequest.nossoNumero,
             especie = boletoRequest.especie,
             valor = boletoRequest.valor,

@@ -8,7 +8,7 @@ data class BoletoDTO (
     val codAgBeneficiario: Int,
     val codContaBeneficiario: String,
     val codAgPagador: Int,
-    val codContaPagador: String,
+    val idContaPagador: String,
     val nossoNumero: String,
     val especie: String,
     val valor: BigDecimal,
