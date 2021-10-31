@@ -8,6 +8,9 @@ import br.com.letscode.mybank.msboleto.utils.Autorizacao
 import com.auth0.jwt.JWT
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.sql.Timestamp
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
 
@@ -20,6 +23,10 @@ class BoletoController (val boletoService: BoletoService) {
     suspend fun pgtoBoleto(@RequestBody boletoRequest: BoletoDTO,
                            @RequestHeader (value = "Authorization", required = true) token : String
     ) : ResponseEntity<String> = run {
+
+        if (getDataExpiracao(token).time < Timestamp.valueOf(LocalDateTime.now()).time) {
+            throw RuntimeException("Token expirado")
+        }
 
         val tokenResultado: String = extrairUUID(token)
 
@@ -62,6 +69,18 @@ class BoletoController (val boletoService: BoletoService) {
             val jwtToken = requestTokenHeader.substring(7)
             JWT.decode(jwtToken).subject
 
+        } else {
+            throw RuntimeException()
+        }
+        return tokenResultado
+    }
+
+
+    private fun getDataExpiracao(token: String): Date {
+        val requestTokenHeader: String = token
+        val tokenResultado: Date = if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            val jwtToken = requestTokenHeader.substring(7)
+            JWT.decode(jwtToken).expiresAt
         } else {
             throw RuntimeException()
         }
