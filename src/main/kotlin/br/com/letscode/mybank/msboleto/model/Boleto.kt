@@ -23,7 +23,8 @@ data class Boleto (
     val jurosDia: Double,
     val vencimento: LocalDate,
     val pgtoAposVencimento: Boolean,
-    val registroCriadoEm: LocalDateTime
+    val registroCriadoEm: LocalDateTime,
+    val pgtoStatus : String = "PENDING"
 
 
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 import java.util.*
 
-data class Saldo (
+data class RequisitaSaldo (
 
     @JsonProperty("accountId")
     val idContaPagador: String,

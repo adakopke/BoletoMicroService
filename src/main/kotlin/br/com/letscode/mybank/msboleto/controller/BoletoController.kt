@@ -52,7 +52,7 @@ class BoletoController (val boletoService: BoletoService) {
             pgtoAposVencimento = boletoRequest.pgtoAposVencimento,
             registroCriadoEm = LocalDateTime.now())
 
-        boletoService.validarPgto(boleto)
+        boletoService.validarPgto(boleto, token)
 
     }
 
