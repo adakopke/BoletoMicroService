@@ -24,15 +24,18 @@ class BoletoController (val boletoService: BoletoService) {
                            @RequestHeader (value = "Authorization", required = true) token : String
     ) : ResponseEntity<String> = run {
 
-        if (getDataExpiracao(token).time < Timestamp.valueOf(LocalDateTime.now()).time) {
-            throw RuntimeException("Token expirado")
-        }
+//        if (getDataExpiracao(token).time < Timestamp.valueOf(LocalDateTime.now()).time) {
+//            throw RuntimeException("Token expirado")
+//        }
 
         val tokenResultado: String = extrairUUID(token)
 
         //TODO Validar esta funcionalidade para saber se a permissão obtida é suficiente
         val permissoes : Autorizacoes = Autorizacao.getPermission(token)
-        println(permissoes)
+
+        if (!permissoes.permissions.contains("WRITE")) {
+            throw RuntimeException("Perfil não ter permissão para realizar pagamentos")
+        }
 
         val boleto = Boleto (
 
@@ -55,9 +58,18 @@ class BoletoController (val boletoService: BoletoService) {
 
 
     @GetMapping("pagamentos")
-    fun consultar (@RequestHeader (value = "Authorization", required = true) token : String) : ResponseEntity<List<Boleto>> = run  {
+    suspend fun consultar (@RequestHeader (value = "Authorization", required = true) token : String) : ResponseEntity<List<Boleto>> = run  {
 
-        //TODO extrair idCliente do token
+        //        if (getDataExpiracao(token).time < Timestamp.valueOf(LocalDateTime.now()).time) {
+//            throw RuntimeException("Token expirado")
+//        }
+
+
+        val permissoes : Autorizacoes = Autorizacao.getPermission(token)
+        if (!permissoes.permissions.contains("READ")) {
+            throw RuntimeException("Perfil não ter permissão para realizar consulta de pagamentos efetivados")
+        }
+
         val tokenResultado: String = extrairUUID(token)
         val idCliente: UUID = UUID.fromString(tokenResultado)
         ResponseEntity.ok(boletoService.consultar(idCliente))
