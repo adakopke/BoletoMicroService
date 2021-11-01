@@ -4,6 +4,7 @@ import br.com.letscode.mybank.msboleto.model.Boleto
 import br.com.letscode.mybank.msboleto.model.RequisitaSaldo
 import br.com.letscode.mybank.msboleto.model.RespostaSaldo
 import br.com.letscode.mybank.msboleto.repository.BoletoRepository
+import br.com.letscode.mybank.msboleto.utils.ConfirmaTransacao
 import br.com.letscode.mybank.msboleto.utils.ConsultaSaldo
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -27,7 +28,6 @@ class BoletoService (val boletoRepository: BoletoRepository ) {
         boleto.valor = boleto.valor.add(valorJuros).add(valorMulta)
         }
 
-        //TODO Implementar consulta ao MS Saldo
 
         val requisitaSaldo = RequisitaSaldo (
 
@@ -38,24 +38,30 @@ class BoletoService (val boletoRepository: BoletoRepository ) {
 
         val retornoSaldo : RespostaSaldo = ConsultaSaldo.getSaldo(token, requisitaSaldo)
 
-        if (retornoSaldo.operationStatus.equals("ALLOWED")){
+        val atualizaBoleto : Boleto
 
+        if (retornoSaldo.operationStatus.equals("ALLOWED")){
+            boleto.idRegistroOperacao = retornoSaldo.id
+            boleto.pgtoStatus = "PENDING-CONFIRMATION"
             boletoRepository.save(boleto)
 
-            //TODO Criar aqui a validação do retorno da operação no MS de saldo
-            //TODO Lembrar de incluir um campo no boleto para salvar o status da operacao ALLOWED or DENIED
+            if (ConfirmaTransacao.getConfirmacao(boleto.idRegistroOperacao).response != "Transação feita") {
+                 atualizaBoleto = boletoRepository.findByIdRegistroOperacao(boleto.idRegistroOperacao)
+                 atualizaBoleto.pgtoStatus = "DENIED"
+                 boletoRepository.save(atualizaBoleto)
+                 return ResponseEntity.internalServerError().body("Operação não concluída - Tente novamente")
+            }
 
-            return ResponseEntity.ok("Operação realizada com sucesso \n $boleto")
-
-
+            atualizaBoleto = boletoRepository.findByIdRegistroOperacao(boleto.idRegistroOperacao)
+            atualizaBoleto.pgtoStatus = "ALLOWED"
+            boletoRepository.save(atualizaBoleto)
+            return ResponseEntity.ok("Operação realizada com sucesso \n $atualizaBoleto")
 
         }
-
 
         ResponseEntity.ok("Saldo insuficiente para realizar a operação")
 
     }
 
-    //Perguntar na aula se está certo ou se merece um exception
     fun consultar(idCliente: UUID): List<Boleto> = boletoRepository.findAllByIdCliente(idCliente)
 }

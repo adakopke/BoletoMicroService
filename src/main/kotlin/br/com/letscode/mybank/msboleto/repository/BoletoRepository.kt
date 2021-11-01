@@ -7,5 +7,6 @@ import java.util.*
 
 @Repository
 interface BoletoRepository : JpaRepository <Boleto, Int> {
+    fun findByIdRegistroOperacao(idRegistroOperacao: String) : Boleto
     fun findAllByIdCliente(idCliente: UUID) : List<Boleto>
 }

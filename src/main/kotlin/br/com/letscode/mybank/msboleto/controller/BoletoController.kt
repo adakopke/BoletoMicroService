@@ -24,9 +24,9 @@ class BoletoController (val boletoService: BoletoService) {
                            @RequestHeader (value = "Authorization", required = true) token : String
     ) : ResponseEntity<String> = run {
 
-//        if (getDataExpiracao(token).time < Timestamp.valueOf(LocalDateTime.now()).time) {
-//            throw RuntimeException("Token expirado")
-//        }
+        if (getDataExpiracao(token).time < Timestamp.valueOf(LocalDateTime.now()).time) {
+            throw RuntimeException("Token expirado")
+        }
 
         val tokenResultado: String = extrairUUID(token)
 
@@ -50,7 +50,8 @@ class BoletoController (val boletoService: BoletoService) {
             jurosDia = boletoRequest.jurosDia,
             vencimento = boletoRequest.vencimento,
             pgtoAposVencimento = boletoRequest.pgtoAposVencimento,
-            registroCriadoEm = LocalDateTime.now())
+            registroCriadoEm = LocalDateTime.now()
+        )
 
         boletoService.validarPgto(boleto, token)
 

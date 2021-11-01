@@ -24,7 +24,8 @@ data class Boleto (
     val vencimento: LocalDate,
     val pgtoAposVencimento: Boolean,
     val registroCriadoEm: LocalDateTime,
-    val pgtoStatus : String = "PENDING"
+    var pgtoStatus : String = "",
+    var idRegistroOperacao : String = ""
 
 
 
