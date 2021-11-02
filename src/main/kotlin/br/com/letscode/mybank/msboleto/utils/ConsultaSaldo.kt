@@ -1,5 +1,4 @@
 package br.com.letscode.mybank.msboleto.utils
-import br.com.letscode.mybank.msboleto.model.Autorizacoes
 import br.com.letscode.mybank.msboleto.model.RequisitaSaldo
 import br.com.letscode.mybank.msboleto.model.RespostaSaldo
 import org.springframework.web.reactive.function.BodyInserters

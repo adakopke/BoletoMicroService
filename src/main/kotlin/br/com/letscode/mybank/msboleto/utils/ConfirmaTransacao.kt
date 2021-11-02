@@ -1,13 +1,8 @@
 package br.com.letscode.mybank.msboleto.utils
-import br.com.letscode.mybank.msboleto.model.Autorizacoes
-import br.com.letscode.mybank.msboleto.model.RequisitaSaldo
 import br.com.letscode.mybank.msboleto.model.RespostaConfirmacaoTransacao
-import br.com.letscode.mybank.msboleto.model.RespostaSaldo
-import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
-import java.util.function.Predicate
 
 object ConfirmaTransacao {
 

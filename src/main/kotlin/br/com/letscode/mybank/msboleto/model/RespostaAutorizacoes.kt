@@ -1,6 +1,6 @@
 package br.com.letscode.mybank.msboleto.model
 
-data class Autorizacoes (
+data class RespostaAutorizacoes (
 
     val permissions : List<String> = listOf()
 

@@ -17,35 +17,30 @@ import java.util.*
 class BoletoService (val boletoRepository: BoletoRepository ) {
     suspend fun validarPgto(boleto: Boleto, token : String): ResponseEntity<String> = run {
 
-        //TODO TRocar para fun
+        //TODO Trocar para function
         if (boleto.vencimento.isBefore(LocalDate.now()) && boleto.pgtoAposVencimento.equals(false)) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Pagamento só pode ser realizado até o vencimento")
-        } else {
-
-        val diasVencidos = boleto.vencimento.until(LocalDate.now()).days
-        val valorJuros = boleto.valor.multiply(BigDecimal.valueOf(boleto.jurosDia * diasVencidos))
-        val valorMulta = boleto.valor.multiply(BigDecimal.valueOf(boleto.multa))
-        boleto.valor = boleto.valor.add(valorJuros).add(valorMulta)
+        } else if (boleto.vencimento.isBefore(LocalDate.now()) && boleto.pgtoAposVencimento.equals(true)) {
+            val diasVencidos = boleto.vencimento.until(LocalDate.now()).days
+            val valorJuros = boleto.valor.multiply(BigDecimal.valueOf(boleto.jurosDia * diasVencidos))
+            val valorMulta = boleto.valor.multiply(BigDecimal.valueOf(boleto.multa))
+            boleto.valor = boleto.valor.add(valorJuros).add(valorMulta)
         }
 
-
         val requisitaSaldo = RequisitaSaldo (
-
             idContaPagador = boleto.idContaPagador,
             valor = boleto.valor
                 )
 
-
         val retornoSaldo : RespostaSaldo = ConsultaSaldo.getSaldo(token, requisitaSaldo)
-
         val atualizaBoleto : Boleto
 
-        if (retornoSaldo.operationStatus.equals("ALLOWED")){
+        if (retornoSaldo.operationStatus.equals("OK")){
             boleto.idRegistroOperacao = retornoSaldo.id
             boleto.pgtoStatus = "PENDING-CONFIRMATION"
             boletoRepository.save(boleto)
 
-            if (ConfirmaTransacao.getConfirmacao(boleto.idRegistroOperacao).response != "Transação feita") {
+            if (ConfirmaTransacao.getConfirmacao(boleto.idRegistroOperacao).response != "Transação de id ${boleto.idRegistroOperacao} confirmada") {
                  atualizaBoleto = boletoRepository.findByIdRegistroOperacao(boleto.idRegistroOperacao)
                  atualizaBoleto.pgtoStatus = "DENIED"
                  boletoRepository.save(atualizaBoleto)
