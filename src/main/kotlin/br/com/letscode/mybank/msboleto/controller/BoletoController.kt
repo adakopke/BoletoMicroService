@@ -1,6 +1,7 @@
 package br.com.letscode.mybank.msboleto.controller
 
 import br.com.letscode.mybank.msboleto.dto.BoletoDTO
+import br.com.letscode.mybank.msboleto.exception.Exceptions
 import br.com.letscode.mybank.msboleto.model.RespostaAutorizacoes
 import br.com.letscode.mybank.msboleto.model.Boleto
 import br.com.letscode.mybank.msboleto.model.RequisitaAutorizacoes
@@ -63,7 +64,7 @@ class BoletoController (val boletoService: BoletoService) {
             tipoOperacao = "Boleto")
         if (!Autorizacao.getPermission(requisitaAutorizacoes).permissions.contains(permissao)) {
 
-            throw RuntimeException("Perfil não ter permissão para realizar a operação")
+            throw Exceptions.AcessoNegadoException("Perfil não ter permissão para realizar a operação")
         }
 
     }
@@ -71,8 +72,8 @@ class BoletoController (val boletoService: BoletoService) {
     private fun validarToken(token: String): Unit {
      if (token.startsWith("Bearer ")) {
             val jwtToken = token.substring(7)
-            if(JWT.decode(jwtToken).expiresAt.time < Timestamp.valueOf(LocalDateTime.now()).time) throw RuntimeException("Token expirado")
-         } else { throw RuntimeException("Token inválido") }
+            if(JWT.decode(jwtToken).expiresAt.time < Timestamp.valueOf(LocalDateTime.now()).time) throw Exceptions.TokenExpiradoException("Token expirado")
+         } else { throw Exceptions.TokenInvalidoException("Token inválido") }
         }
 
 }

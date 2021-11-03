@@ -1,5 +1,6 @@
 package br.com.letscode.mybank.msboleto.service
 
+import br.com.letscode.mybank.msboleto.exception.Exceptions
 import br.com.letscode.mybank.msboleto.model.Boleto
 import br.com.letscode.mybank.msboleto.model.RequisitaSaldo
 import br.com.letscode.mybank.msboleto.model.RespostaSaldo
@@ -17,10 +18,9 @@ import java.util.*
 class BoletoService (val boletoRepository: BoletoRepository ) {
     suspend fun validarPgto(boleto: Boleto, token : String): ResponseEntity<String> = run {
 
-        //TODO Trocar para function
-        if (boleto.vencimento.isBefore(LocalDate.now()) && boleto.pgtoAposVencimento.equals(false)) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Pagamento só pode ser realizado até o vencimento")
-        } else if (boleto.vencimento.isBefore(LocalDate.now()) && boleto.pgtoAposVencimento.equals(true)) {
+        PgtoAposVencimento(boleto)
+
+        if (boleto.vencimento.isBefore(LocalDate.now()) && boleto.pgtoAposVencimento.equals(true)) {
             val diasVencidos = boleto.vencimento.until(LocalDate.now()).days
             val valorJuros = boleto.valor.multiply(BigDecimal.valueOf(boleto.jurosDia * diasVencidos))
             val valorMulta = boleto.valor.multiply(BigDecimal.valueOf(boleto.multa))
@@ -44,7 +44,7 @@ class BoletoService (val boletoRepository: BoletoRepository ) {
                  atualizaBoleto = boletoRepository.findByIdRegistroOperacao(boleto.idRegistroOperacao)
                  atualizaBoleto.pgtoStatus = "DENIED"
                  boletoRepository.save(atualizaBoleto)
-                 return ResponseEntity.internalServerError().body("Operação não concluída - Tente novamente")
+                 throw Exceptions.FalhaNaComunicacaoInterna("Operação não concluída por falta de comunicação entre os serviços - Tente novamente")
             }
 
             atualizaBoleto = boletoRepository.findByIdRegistroOperacao(boleto.idRegistroOperacao)
@@ -56,6 +56,12 @@ class BoletoService (val boletoRepository: BoletoRepository ) {
 
         ResponseEntity.ok("Saldo insuficiente para realizar a operação")
 
+    }
+
+    private fun PgtoAposVencimento(boleto: Boleto) {
+        if (boleto.vencimento.isBefore(LocalDate.now()) && !boleto.pgtoAposVencimento) {
+          throw Exceptions.LimiteVencimentoException("Pagamento só pode ser realizado até o vencimento")
+        }
     }
 
     fun consultar(idCliente: UUID): List<Boleto> = boletoRepository.findAllByIdCliente(idCliente)
